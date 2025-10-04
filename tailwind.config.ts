@@ -2,7 +2,7 @@ import type { Config } from "tailwindcss";
 
 const config: Config = {
   content: [
-    // Aponta para TODOS os arquivos dentro da pasta 'src'
+    // Esta linha garante que QUALQUER arquivo com essas extensões dentro de 'src' seja lido
     "./src/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {

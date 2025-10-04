@@ -1,16 +1,12 @@
-/*
- * Substitui o antigo '@tailwind base'.
- * 'preflight' é o novo nome para os estilos base do Tailwind.
+/**
+ * Usa a sintaxe exigida pela v4 do Tailwind.
+ * 'preflight' substitui o antigo '@tailwind base'.
+ * 'utilities' agora engloba o que antes era 'components' e 'utilities'.
 */
 @import "tailwindcss/preflight";
+@import "tailwindcss/utilities";
 
-/*
- * Substitui '@tailwind components' e '@tailwind utilities'.
- * Na v4, os componentes e utilitários são agrupados.
-*/
-@tailwind utilities;
-
-/* Nossos estilos globais personalizados continuam aqui */
+/* Seus estilos personalizados continuam aqui */
 html {
   scroll-behavior: smooth;
 }
