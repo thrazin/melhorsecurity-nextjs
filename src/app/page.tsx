@@ -36,7 +36,37 @@ export default function HomePage() {
     event.preventDefault();
     setIsCheckoutLoading(true);
     setCheckoutError('');
-    // ... (Lógica do checkout que já tínhamos)
+
+    if (!checkoutFullName || !checkoutEmail || !checkoutWhatsapp) {
+      setCheckoutError('Todos os campos são obrigatórios.');
+      setIsCheckoutLoading(false);
+      return;
+    }
+
+    try {
+      const response = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          customerName: checkoutFullName,
+          customerEmail: checkoutEmail,
+          customerPhone: checkoutWhatsapp,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Ocorreu um erro ao iniciar o pagamento.');
+      }
+
+      window.location.href = data.url;
+
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Ocorreu um erro desconhecido.';
+      setCheckoutError(message);
+      setIsCheckoutLoading(false);
+    }
   };
 
   // --- Estados e Lógica para o FORMULÁRIO DE CONTATO ---
@@ -50,7 +80,34 @@ export default function HomePage() {
     event.preventDefault();
     setIsContactLoading(true);
     setContactStatus('');
-    // ... (Lógica do formulário de contato que vai chamar nossa nova API)
+
+    try {
+        const response = await fetch('/api/contact', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                name: contactName,
+                email: contactEmail,
+                message: contactMessage,
+            }),
+        });
+
+        if (!response.ok) {
+            throw new Error('A resposta do servidor não foi OK.');
+        }
+
+        setContactStatus('success');
+        setContactName('');
+        setContactEmail('');
+        setContactMessage('');
+
+    } catch (error) {
+        // A CORREÇÃO ESTÁ AQUI: Usamos a variável 'error'
+        console.error("Falha no envio do formulário de contato:", error);
+        setContactStatus('error');
+    } finally {
+        setIsContactLoading(false);
+    }
   };
 
   const faqData = [
@@ -65,7 +122,7 @@ export default function HomePage() {
     <div className="bg-[#111827] text-slate-300 font-sans antialiased">
       <header className="py-4 px-6 md:px-12 flex justify-between items-center sticky top-0 z-50 bg-[#111827]/80 backdrop-blur-sm border-b border-slate-800">
         <div className="flex items-center gap-3">
-          <Image src="/logo.webp" alt="Logo Melhor Security" width={32} height={32} />
+          <Image src="/images/logo.webp" alt="Logo Melhor Security" width={32} height={32} />
           <span className="font-bold text-xl text-white">Melhor Security</span>
         </div>
         <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
@@ -101,7 +158,6 @@ export default function HomePage() {
               <p className="text-lg mt-4 max-w-3xl mx-auto text-slate-400">Com a mentoria, você adquire habilidades práticas para se defender das ameaças digitais mais comuns.</p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-12">
-              {/* Cards de Benefícios */}
               <div className="bg-slate-800/50 p-6 rounded-lg border border-slate-700"> <ShieldCheck className="text-emerald-400" size={32} /> <h3 className="text-xl font-bold mt-4 text-white">Blindar Redes Sociais</h3> <p className="text-slate-400 mt-2">Aprenda a ativar as barreiras que impedem a clonagem e a invasão de contas.</p> </div>
               <div className="bg-slate-800/50 p-6 rounded-lg border border-slate-700"> <KeyRound className="text-emerald-400" size={32} /> <h3 className="text-xl font-bold mt-4 text-white">Senhas à Prova de Falhas</h3> <p className="text-slate-400 mt-2">Descubra o método para criar e gerenciar senhas super seguras para todos os seus apps.</p> </div>
               <div className="bg-slate-800/50 p-6 rounded-lg border border-slate-700"> <Search className="text-emerald-400" size={32} /> <h3 className="text-xl font-bold mt-4 text-white">Mestre em Identificar Golpes</h3> <p className="text-slate-400 mt-2">Em segundos, você saberá identificar um e-mail, SMS ou mensagem de WhatsApp falsa.</p> </div>
@@ -120,7 +176,6 @@ export default function HomePage() {
                     <p className="text-lg mt-4 max-w-3xl mx-auto text-slate-400">Um plano de 4 etapas desenhado para te dar confiança e controle total da sua vida digital.</p>
                 </div>
                 <div className="mt-12 space-y-8">
-                    {/* Itens da Metodologia */}
                     <div className="flex items-start gap-6"> <div className="text-xl font-bold bg-slate-700 text-emerald-400 rounded-full h-10 w-10 flex items-center justify-center">1</div> <div><h3 className="text-xl font-bold text-white">Anamnese e Diagnóstico</h3><p className="text-slate-400 mt-1">Nosso primeiro encontro é uma imersão no seu dia a dia digital. Faremos um diagnóstico completo para mapear seus riscos e criar um plano de aprendizado 100% focado suas necessidades.</p></div> </div>
                     <div className="flex items-start gap-6"> <div className="text-xl font-bold bg-slate-700 text-emerald-400 rounded-full h-10 w-10 flex items-center justify-center">2</div> <div><h3 className="text-xl font-bold text-white">Encontros Práticos</h3><p className="text-slate-400 mt-1">Realizaremos 4 encontros de 1 hora, ao vivo e individuais. Você escolhe a plataforma mais confortável: Google Meet, Discord ou WhatsApp. O foco é total em aplicar o conhecimento na prática.</p></div> </div>
                     <div className="flex items-start gap-6"> <div className="text-xl font-bold bg-slate-700 text-emerald-400 rounded-full h-10 w-10 flex items-center justify-center">3</div> <div><h3 className="text-xl font-bold text-white">Material de Suporte</h3><p className="text-slate-400 mt-1">Você receberá acesso a um material eletrônico exclusivo, com o passo a passo e os links para todas as ferramentas discutidas. Um guia de consulta rápida para usar sempre que precisar.</p></div> </div>
@@ -150,7 +205,6 @@ export default function HomePage() {
                   <a href="#comprar-form" className="mt-6 block w-full text-center bg-emerald-600 text-white font-bold py-3 rounded-lg transition hover:bg-emerald-500">Garantir Minha Vaga</a>
                 </div>
             </div>
-            {/* O formulário de checkout agora fica aqui */}
             <div id="comprar-form" className="max-w-md mx-auto mt-12">
               <form onSubmit={handleCheckoutSubmit} className="space-y-6 bg-slate-800/50 border border-slate-700 rounded-xl p-8">
                 <h3 className="text-2xl font-bold text-center text-white">Preencha para Pagar</h3>
