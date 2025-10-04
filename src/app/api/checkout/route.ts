@@ -6,14 +6,16 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 export async function POST(request: Request) {
   try {
     const { customerEmail, customerName, customerPhone } = await request.json();
+    
+    // Detecta a URL do site dinamicamente a partir da requisição
+    const host = request.headers.get('host');
+    const protocol = process.env.VERCEL_ENV === 'production' ? 'https' : 'http';
+    const appUrl = `${protocol}://${host}`;
 
     if (!customerEmail || !customerName) {
       return NextResponse.json({ error: 'Nome e e-mail são obrigatórios' }, { status: 400 });
     }
     
-    const host = request.headers.get('host');
-    const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http';
-
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       line_items: [
@@ -21,8 +23,7 @@ export async function POST(request: Request) {
           price_data: {
             currency: 'brl',
             product_data: {
-              name: 'Mentoria Completa em Segurança Digital',
-              description: 'Proteção contra golpes virtuais e fraudes online'
+              name: 'Mentoria Completa em Segurança Digital'
             },
             unit_amount: 45000,
           },
@@ -30,8 +31,8 @@ export async function POST(request: Request) {
         },
       ],
       mode: 'payment',
-      success_url: `${protocol}://${host}/success`,
-      cancel_url: `${protocol}://${host}/cancel`,
+      success_url: `${appUrl}/success`, // URL de sucesso corrigida
+      cancel_url: `${appUrl}/cancel`,   // URL de cancelamento corrigida
       customer_email: customerEmail,
       metadata: {
         customer_name: customerName,
@@ -42,9 +43,8 @@ export async function POST(request: Request) {
     return NextResponse.json({ url: session.url });
 
   } catch (error) {
-    // ESTA É A PARTE CORRIGIDA
     console.error('Stripe error:', error);
-    const message = error instanceof Error ? error.message : 'Ocorreu um erro desconhecido.';
+    const message = error instanceof Error ? error.message : 'Erro desconhecido.';
     return NextResponse.json({ error: 'Erro interno do servidor', message }, { status: 500 });
   }
 }
