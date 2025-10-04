@@ -5,26 +5,29 @@ import { Resend } from 'resend';
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 const resend = new Resend(process.env.RESEND_API_KEY!);
 
-// Usa as variáveis de ambiente que você configurou
-const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!;
-const adminEmail = process.env.ADMIN_EMAIL!;
-const senderEmail = process.env.RESEND_FROM_EMAIL!;
-const calendlyLink = process.env.SCHEDULING_URL!;
+// Usa os nomes exatos das suas variáveis de ambiente
+const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+const adminEmail = process.env.ADMIN_EMAIL;
+const senderEmail = process.env.RESEND_FROM_EMAIL;
+const calendlyLink = process.env.SCHEDULING_URL;
 
 export async function POST(req: Request) {
+  // Verificação inicial de configuração
+  if (!webhookSecret || !adminEmail || !senderEmail || !calendlyLink) {
+    console.error("ERRO CRÍTICO: Uma ou mais variáveis de ambiente para o webhook não estão configuradas (STRIPE_WEBHOOK_SECRET, ADMIN_EMAIL, RESEND_FROM_EMAIL, SCHEDULING_URL).");
+    return NextResponse.json({ error: 'Erro de configuração interna do servidor.' }, { status: 500 });
+  }
+
   const buf = await req.text();
   const sig = req.headers.get('stripe-signature')!;
 
   let event: Stripe.Event;
 
   try {
-    if (!webhookSecret) {
-      throw new Error("A variável de ambiente STRIPE_WEBHOOK_SECRET não está definida.");
-    }
     event = stripe.webhooks.constructEvent(buf, sig, webhookSecret);
   } catch (err) {
     const errorMessage = err instanceof Error ? err.message : 'Unknown error';
-    console.warn(`❌ Falha na verificação do Webhook: ${errorMessage}`);
+    console.warn(`❌ Falha na verificação da assinatura do Webhook: ${errorMessage}`);
     return NextResponse.json({ error: `Webhook Error: ${errorMessage}` }, { status: 400 });
   }
 
@@ -53,7 +56,7 @@ export async function POST(req: Request) {
         from: `Melhor Security <${senderEmail}>`,
         to: customerEmail,
         subject: '✅ Sua compra da Mentoria foi confirmada!',
-        html: `<h1>Obrigado por sua compra, ${customerName}!</h1><p>Você deu um passo importante para sua segurança digital.</p><p>O próximo passo é agendar nossa primeira sessão. Por favor, use o link abaixo para escolher o melhor horário:</p><p><a href="${calendlyLink}"><strong>Clique aqui para Agendar sua Mentoria</strong></a></p><p>Até breve!</p>`,
+        html: `<h1>Obrigado por sua compra, ${customerName}!</h1><p>Você deu um passo importante para sua segurança digital.</p><p>O próximo passo é agendar nossa primeira sessão. Por favor, use o link abaixo para escolher o melhor horário:</p><p><a href="${calendlyLink}" target="_blank" rel="noopener noreferrer"><strong>Clique aqui para Agendar sua Mentoria</strong></a></p><p>Até breve!</p>`,
       });
 
     } catch (error) {

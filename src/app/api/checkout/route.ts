@@ -7,10 +7,9 @@ export async function POST(request: Request) {
   try {
     const { customerEmail, customerName, customerPhone } = await request.json();
     
-    // Detecta a URL do site dinamicamente a partir da requisição
+    // Constrói a URL base de forma robusta para o ambiente da Vercel
     const host = request.headers.get('host');
-    const protocol = process.env.VERCEL_ENV === 'production' ? 'https' : 'http';
-    const appUrl = `${protocol}://${host}`;
+    const appUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : `http://${host}`;
 
     if (!customerEmail || !customerName) {
       return NextResponse.json({ error: 'Nome e e-mail são obrigatórios' }, { status: 400 });
@@ -43,8 +42,8 @@ export async function POST(request: Request) {
     return NextResponse.json({ url: session.url });
 
   } catch (error) {
-    console.error('Stripe error:', error);
+    console.error('Stripe Checkout Error:', error);
     const message = error instanceof Error ? error.message : 'Erro desconhecido.';
-    return NextResponse.json({ error: 'Erro interno do servidor', message }, { status: 500 });
+    return NextResponse.json({ error: 'Erro interno do servidor ao criar checkout', message }, { status: 500 });
   }
 }
