@@ -1,10 +1,4 @@
-/**
- * Usa a sintaxe exigida pela v4 do Tailwind.
- * 'preflight' substitui o antigo '@tailwind base'.
- * 'utilities' agora engloba o que antes era 'components' e 'utilities'.
-*/
-@import "tailwindcss/preflight";
-@import "tailwindcss/utilities";
+@import "tailwindcss";
 
 /* Seus estilos personalizados continuam aqui */
 html {
