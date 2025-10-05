@@ -1,13 +1,70 @@
 @import "tailwindcss";
 
-/* Seus estilos personalizados continuam aqui */
-html {
-  scroll-behavior: smooth;
+/* Define uma cor de fundo global e a fonte */
+@layer base {
+  body {
+    background-color: #0d1117;
+    color: #e6edf3;
+    font-family: var(--font-roboto-flex);
+    overflow-x: hidden;
+  }
 }
 
-body {
-  background-color: #111827;
-  color: #cbd5e1;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+/* Animação de background para um efeito sutil */
+@keyframes background-pan {
+  from {
+    background-position: 0% 0%;
+  }
+  to {
+    background-position: -200% 0%;
+  }
+}
+
+/* Efeito de brilho neon para elementos chave */
+@layer utilities {
+  .neon-glow {
+    text-shadow: 0 0 5px #00ff00, 0 0 10px #00ff00, 0 0 15px #00ff00;
+  }
+
+  /* Estilos para o background do corpo com imagem */
+  .bg-circuits {
+    background-image: url('/images/circuits.webp');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    position: relative;
+    z-index: 0;
+    overflow: hidden;
+  }
+
+  .bg-circuits::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: -1;
+  }
+}
+
+/* Animação para elementos flutuantes */
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+@layer utilities {
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
+  }
 }
