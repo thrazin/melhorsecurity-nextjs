@@ -1,25 +1,22 @@
 import type { Metadata } from "next";
 import localFont from 'next/font/local';
+import { SpeedInsights } from "@vercel/speed-insights/next"; // Adicionado
 import "./globals.css";
 
-// Configura a sua fonte local (preservado)
 const robotoFlex = localFont({
   src: '../../public/font/RobotoFlex-VariableFont_GRAD,XOPQ,XTRA,YOPQ,YTAS,YTDE,YTFI,YTLC,YTUC,opsz,slnt,wdth,wght.ttf',
   display: 'swap',
   variable: '--font-roboto-flex',
 });
 
-// --- INÍCIO DA CORREÇÃO DE SEO ---
 export const metadata: Metadata = {
-  // Metadados básicos
   title: "Melhor Security | Mentoria em Segurança Digital",
   description: "Aprenda a proteger seu Pix, WhatsApp e senhas de golpes com uma mentoria individual e prática.",
   icons: {
     icon: '/favicon/favicon.ico',
     apple: '/favicon/apple-touch-icon.png',
   },
-
-  // Metadados avançados para SEO e redes sociais (com URLs absolutas)
+  metadataBase: new URL('https://melhorsecurity.com'),
   openGraph: {
     title: "Melhor Security | Mentoria em Segurança Digital",
     description: "Proteja-se contra golpes virtuais e fraudes online.",
@@ -27,7 +24,7 @@ export const metadata: Metadata = {
     siteName: 'Melhor Security',
     images: [
       {
-        url: 'https://melhorsecurity.com/og-image.png', // URL completa da imagem
+        url: '/og-image.png',
         width: 1200,
         height: 630,
         alt: 'Mentoria em Segurança Digital com Melhor Security',
@@ -40,7 +37,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: "Melhor Security | Mentoria em Segurança Digital",
     description: "Aprenda a proteger seu Pix, WhatsApp e senhas de golpes.",
-    images: ['https://melhorsecurity.com/og-image.png'], // URL completa da imagem
+    images: ['/og-image.png'],
   },
   robots: {
     index: true,
@@ -54,7 +51,6 @@ export const metadata: Metadata = {
     },
   },
 };
-// --- FIM DA CORREÇÃO DE SEO ---
 
 export default function RootLayout({
   children,
@@ -64,7 +60,6 @@ export default function RootLayout({
   return (
     <html lang="pt-BR" className={robotoFlex.variable}>
       <head>
-        {/* Adiciona os Dados Estruturados (Schema.org) */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify({
@@ -86,7 +81,10 @@ export default function RootLayout({
           })}}
         />
       </head>
-      <body>{children}</body>
+      <body>
+        {children}
+        <SpeedInsights />
+      </body>
     </html>
   );
 }
