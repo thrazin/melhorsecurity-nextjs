@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
 
+// A propriedade 'closeModal' foi removida, pois não é necessária aqui.
 export default function PaymentForm() {
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
@@ -35,7 +36,11 @@ export default function PaymentForm() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      <h3 className="text-2xl font-bold text-center text-white">Preencha para Pagar</h3>
+      <div className="text-center">
+        <h3 className="text-2xl font-bold text-white">Preencha seus dados e garanta seu sossego</h3>
+        <p className="text-sm text-slate-400 mt-2">Você será redirecionado para o ambiente seguro da Stripe para finalizar o pagamento.</p>
+      </div>
+      
       <div>
         <label className="block font-bold text-slate-300 mb-2">Nome Completo</label>
         <input type="text" value={fullName} onChange={(e) => setFullName(e.target.value)} required className="w-full px-4 py-3 bg-[#0F172A] border border-slate-600 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none transition" />
