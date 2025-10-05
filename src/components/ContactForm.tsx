@@ -8,7 +8,8 @@ export default function ContactForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [status, setStatus] = useState('');
 
-  const handleSubmit = async (event: React.Event) => {
+  // A CORREÇÃO ESTÁ AQUI: O tipo correto é React.FormEvent
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     setIsLoading(true);
     setStatus('');
@@ -26,7 +27,6 @@ export default function ContactForm() {
       setEmail('');
       setMessage('');
     } catch (error) {
-      // A CORREÇÃO ESTÁ AQUI: Usamos a variável 'error'
       console.error("Contact form submission error:", error);
       setStatus('error');
     } finally {
