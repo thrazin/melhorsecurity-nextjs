@@ -3,14 +3,13 @@ import { NextResponse } from 'next/server';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
+// Define a URL de produção como uma constante. Esta é a forma mais segura.
+const PRODUCTION_URL = "https://www.melhorsecurity.com";
+
 export async function POST(request: Request) {
   try {
     const { customerEmail, customerName, customerPhone } = await request.json();
     
-    // Constrói a URL base de forma robusta para o ambiente da Vercel
-    const host = request.headers.get('host');
-    const appUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : `http://${host}`;
-
     if (!customerEmail || !customerName) {
       return NextResponse.json({ error: 'Nome e e-mail são obrigatórios' }, { status: 400 });
     }
@@ -30,8 +29,9 @@ export async function POST(request: Request) {
         },
       ],
       mode: 'payment',
-      success_url: `${appUrl}/success`, // URL de sucesso corrigida
-      cancel_url: `${appUrl}/cancel`,   // URL de cancelamento corrigida
+      // Força o uso do domínio de produção para os redirecionamentos.
+      success_url: `${PRODUCTION_URL}/success`, 
+      cancel_url: `${PRODUCTION_URL}/cancel`,
       customer_email: customerEmail,
       metadata: {
         customer_name: customerName,
