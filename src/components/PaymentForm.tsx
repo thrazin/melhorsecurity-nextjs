@@ -55,7 +55,7 @@ export default function PaymentForm() {
       </div>
       {error && <p className="text-red-400 text-center font-semibold">{error}</p>}
       <button type="submit" disabled={isLoading} className="w-full py-4 bg-emerald-600 text-white font-bold text-lg rounded-lg transition hover:bg-emerald-500 disabled:bg-slate-600">
-        {isLoading ? 'Processando...' : `Pagar R$ 450,00`}
+        {isLoading ? 'Processando...' : `Pagar R$ 500,00`}
       </button>
     </form>
   );

@@ -23,7 +23,7 @@ export async function POST(request: Request) {
             product_data: {
               name: 'Mentoria Completa em Segurança Digital'
             },
-            unit_amount: 45000,
+            unit_amount: 50000,
           },
           quantity: 1,
         },

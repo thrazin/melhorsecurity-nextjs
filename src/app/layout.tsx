@@ -75,7 +75,7 @@ export default function RootLayout({
             "serviceType": "Consultoria em Segurança Digital",
             "offers": {
               "@type": "Offer",
-              "price": "450.00",
+              "price": "500.00",
               "priceCurrency": "BRL"
             }
           })}}
